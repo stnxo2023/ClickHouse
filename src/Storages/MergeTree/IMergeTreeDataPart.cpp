@@ -2,9 +2,8 @@
 #include <Storages/MergeTree/IDataPartStorage.h>
 #include <base/types.h>
 
-#include <exception>
-#include <optional>
-#include <string_view>
+#include <Columns/ColumnNullable.h>
+#include <Common/SipHash.h>
 #include <Common/quoteString.h>
 #include <Compression/CompressedReadBuffer.h>
 #include <Compression/CompressionFactory.h>
@@ -43,6 +42,10 @@
 #include <Common/logger_useful.h>
 
 #include <Disks/IO/CachedOnDiskReadBufferFromFile.h>
+
+#include <exception>
+#include <optional>
+#include <string_view>
 
 
 namespace CurrentMetrics
@@ -1523,6 +1526,7 @@ UInt64 IMergeTreeDataPart::readExistingRowsCount()
         /*virtual_fields=*/ {},
         /*uncompressed_cache=*/{},
         storage.getContext()->getMarkCache().get(),
+        nullptr,
         std::make_shared<AlterConversions>(),
         MergeTreeReaderSettings{},
         ValueSizeMap{},
@@ -2518,6 +2522,7 @@ ColumnPtr IMergeTreeDataPart::getColumnSample(const NameAndTypePair & column) co
         /*virtual_fields=*/ {},
         /*uncompressed_cache=*/{},
         storage.getContext()->getMarkCache().get(),
+        nullptr,
         std::make_shared<AlterConversions>(),
         settings,
         ValueSizeMap{},
